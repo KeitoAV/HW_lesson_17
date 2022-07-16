@@ -15,15 +15,7 @@ class MoviesView(Resource):
         genre_id = request.args.get('genre_id', type=int)
 
         if director_id and genre_id:
-            movies = db.session \
-                .query(
-                Movie.id,
-                Movie.title,
-                Movie.description,
-                Movie.trailer,
-                Movie.rating,
-                Genre.name.label('genre'),
-                Director.name.label('director')) \
+            movies = db.session.query(Movie) \
                 .join(Movie.genre).join(Movie.director) \
                 .filter(Movie.director_id == director_id, Movie.genre_id == genre_id) \
                 .all()
@@ -35,15 +27,7 @@ class MoviesView(Resource):
                 return movies_schema.dump(movies), 200
 
         if director_id:
-            movies = db.session \
-                .query(
-                Movie.id,
-                Movie.title,
-                Movie.description,
-                Movie.trailer,
-                Movie.rating,
-                Genre.name.label('genre'),
-                Director.name.label('director')) \
+            movies = db.session.query(Movie) \
                 .join(Movie.genre).join(Movie.director) \
                 .filter(Movie.director_id == director_id) \
                 .all()
@@ -54,15 +38,7 @@ class MoviesView(Resource):
                 return movies_schema.dump(movies), 200
 
         if genre_id:
-            movies = db.session \
-                .query(
-                Movie.id,
-                Movie.title,
-                Movie.description,
-                Movie.trailer,
-                Movie.rating,
-                Genre.name.label('genre'),
-                Director.name.label('director')) \
+            movies = db.session.query(Movie) \
                 .join(Movie.genre).join(Movie.director) \
                 .filter(Movie.genre_id == genre_id) \
                 .all()
@@ -73,24 +49,17 @@ class MoviesView(Resource):
                 return movies_schema.dump(movies), 200
 
         else:
-            all_movies = db.session \
-                .query(
-                Movie.id,
-                Movie.title,
-                Movie.description,
-                Movie.trailer,
-                Movie.rating,
-                Genre.name.label('genre'),
-                Director.name.label('director')) \
-                .join(Movie.genre) \
-                .join(Movie.director) \
+            all_movies = db.session.query(Movie) \
+                .join(Movie.genre).join(Movie.director) \
                 .all()
+
             return movies_schema.dump(all_movies), 200
 
 
 @movies_ns.route('/<int:movie_id>')
 class MovieView(Resource):
     """Получаем данные о фильме по id"""
+
     def get(self, movie_id):
         movie = db.session.query(Movie).get(movie_id)
         if movie is not None:

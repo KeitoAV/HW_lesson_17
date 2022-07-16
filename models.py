@@ -30,6 +30,24 @@ class Genre(db.Model):
 
 
 # Schemas
+class DirectorSchema(Schema):
+    id = fields.Int(dump_only=True)
+    name = fields.Str()
+
+
+director_schema = DirectorSchema()
+directors_schema = DirectorSchema(many=True)
+
+
+class GenreSchema(Schema):
+    id = fields.Int(dump_only=True)
+    name = fields.Str()
+
+
+genre_schema = GenreSchema()
+genres_schema = GenreSchema(many=True)
+
+
 class MovieSchema(Schema):
     id = fields.Int(dump_only=True)
     title = fields.Str()
@@ -39,27 +57,9 @@ class MovieSchema(Schema):
     rating = fields.Float()
     genre_id = fields.Int()
     director_id = fields.Int()
-    genre = fields.Str()
-    director = fields.Str()
+    genre = fields.Pluck(GenreSchema, 'name')
+    director = fields.Pluck(DirectorSchema, 'name')
 
 
 movie_schema = MovieSchema()
 movies_schema = MovieSchema(many=True)
-
-
-# class DirectorSchema(Schema):
-#     id = fields.Int(dump_only=True)
-#     name = fields.Str()
-#
-#
-# director_schema = MovieSchema()
-# directors_schema = MovieSchema(many=True)
-#
-#
-# class GenreSchema(Schema):
-#     id = fields.Int(dump_only=True)
-#     name = fields.Str()
-#
-#
-# genre_schema = MovieSchema()
-# genres_schema = MovieSchema(many=True)
